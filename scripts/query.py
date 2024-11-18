@@ -14,12 +14,12 @@ warnings.filterwarnings('ignore') # setting ignore as a parameter
 
 # prompting template
 templates = {
-'CC_classification': '''A counterfactual claim (CC) has the following two features: it is a conditional claim written in subjunctive mood. A CC describe hypothetical scenarios. Is the Claim below a counterfactual claim? Answer in JSON format with fields "Answer" and "Explaination". In "Answer", use Y for Yes or N for No. 
+'CC_classification': '''A counterfactual claim (CC) has the following two features: it is a conditional claim written in the subjunctive mood. A CC describes hypothetical scenarios. Is the Claim below a counterfactual claim? Answer in JSON format with fields "Answer" and "Explanation". In "Answer", use Y for Yes or N for No. 
 Claim: {}'''
 'Vf': '''A claim is verifiable if its truth value can be derived or tested to be true or false based on specified knowledge. Is Claim1 verifiable? Claim1 is originally from the CC in an online conversation.
 Claim1: {}
 CC: {}
-PPlease respond with 1 for Yes or -1 for No or 0 for unsure. Do not provide any additional information or explanation. Only respond with -1, 1, 0''',
+Please respond with 1 for Yes or -1 for No or 0 for unsure. Do not provide any additional information or explanation. Only respond with -1, 1, 0''',
 'TV': '''Claim1 is originally from the Claim2 in an online conversation. Is Claim1 true?
 Claim1: {}
 Claim2: {}
@@ -29,7 +29,7 @@ Please respond with 1 for yes or -1 for No or 0 for unsure. Do not provide any a
     Claim2: {}
     Please respond with 1 for Yes or -1 for No or 0 for unsure.''',
 'OnePrompt':'''Claim 1 is a counterfactual claim from an online conversation. Is Claim1 true? Claim1: "{}".  Please respond with 1 for yes or -1 for No or 0 for unsure. Do not provide any additional information or explanation. Only respond with -1, 1, 0''',
-'Al3': '''A counterfactual claim is false if its antecedent is true or its consequent is true or its antecedent does not cause the consequent. In addition, a counterfactual claim is true if both its antecedent and consequent are false and its antecedent causes its consequent. Otherwise, it is unkonwn.
+'Al3': '''A counterfactual claim is false if its antecedent is true or its consequent is true or its antecedent does not cause the consequent. In addition, a counterfactual claim is true if both its antecedent and consequent are false and its antecedent causes its consequent. Otherwise, it is unknown.
 Given the counterfactual claim: {}
 Its antecedent is: {}
 Its consequent is:{}
@@ -52,7 +52,7 @@ def query_gpt(CC, temp, query_prompting, log):
         temperature=temp,  # column with name GPT4 is of temp 1, column with name GPT4_temp0 is of temp 0,
         max_tokens=128)
     answer = full_answer1.choices[0].message.content
-    query_ans = {"CC": CC, "model": "gpt-4", "temprature": temp, "max_tokens": 128, "query": query_prompting,
+    query_ans = {"CC": CC, "model": "gpt-4", "temperature": temp, "max_tokens": 128, "query": query_prompting,
                  "ans": answer, "time": datetime.datetime.utcnow().isoformat() + "Z"}
     log.write(str(query_ans) + '\n')
     try:
@@ -67,10 +67,10 @@ def query_gpt(CC, temp, query_prompting, log):
 def query_llama3(CC, temp, query_prompting, log):
     model_name_llama3 = 'myllama3:latest'   # change it into your own model name.
     full_answer1 = ollama.generate(model=model_name_llama3, prompt=query_prompting, format= "json")['response']
-    query_ans = {"CC": CC, "model": model_name_llama3, "temprature": temp, "query": query_prompting,
+    query_ans = {"CC": CC, "model": model_name_llama3, "temperature": temp, "query": query_prompting,
                  "ans": full_answer1}
     log.write(str(query_ans) + '\n')
-    # llama3 return bad format responses so need a bit of format correction.
+    # llama3 returns bad format responses so needs a bit of format correction.
     label = full_answer1.replace('  ', '').replace('\t', '').replace('\n', '').replace(' ,', ',').replace('} ', '}').replace(' }', '}')
     if full_answer1[-1] == '}':
         label = eval(full_answer1)["Answer"]
