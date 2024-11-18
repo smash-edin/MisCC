@@ -14,6 +14,8 @@ warnings.filterwarnings('ignore') # setting ignore as a parameter
 
 # prompting template
 templates = {
+'CC_classification': '''A counterfactual claim (CC) has the following two features: it is a conditional claim written in subjunctive mood. A CC describe hypothetical scenarios. Is the Claim below a counterfactual claim? Answer in JSON format with fields "Answer" and "Explaination". In "Answer", use Y for Yes or N for No. 
+Claim: {}'''
 'Vf': '''A claim is verifiable if its truth value can be derived or tested to be true or false based on specified knowledge. Is Claim1 verifiable? Claim1 is originally from the CC in an online conversation.
 Claim1: {}
 CC: {}
