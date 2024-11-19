@@ -95,8 +95,13 @@ def eva(inp_file, columnpairs, outreport_File):
                 if 'vf' not in str(dataframe.iloc[i][model + '_inconsistency']).lower():
                     y_true.append(dataframe.iloc[i][GS])
                     y_pred.append(dataframe.iloc[i][Prediction])
+        elif task =='subset_classification_only':
+            for i in range(0, len(dataframe)):
+                if dataframe.iloc[i]['Reformed'] == 'N':
+                    y_true.append(dataframe.iloc[i][GS])
+                    y_pred.append(dataframe.iloc[i][Prediction])
         else:
-            print('\n\nError: unknwon evaluation task.\n')
+            print('\n\nError: unknown evaluation task.\n')
         print('\n\nThe lengths of y_true and y_pred are ', len(y_true), len(y_pred))
         print('\nThe values of y_true and y_pred are ', set(y_true), set(y_pred))
 
@@ -160,10 +165,10 @@ def pvalue(input_File, logfile, predict, gs, DV, IVs):
 
 if __name__ == '__main__':
     #----------------To modify below  ----------------
-    # give the input csv file and outut report file below
+    # give the input CSV file and output report file below
     input_File = './data/miscc_baseline.csv'
     report = './data/report.csv'
-    # the tasks can be found i the eva function, e.g.,'sub-claim-together and consistent only'
+    # tasks can be found in the eva function, e.g.,'sub-claim-together and consistent only'
     task = ''
     temp = 0
     model = 'GPT4'
